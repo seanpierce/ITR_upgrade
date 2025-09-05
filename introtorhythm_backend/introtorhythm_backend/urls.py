@@ -20,7 +20,7 @@ from schedule.views import ShowViewSet
 
 
 router = DefaultRouter()
-router.register(r'shows', ShowViewSet)
+router.register(r'schedule/shows', ShowViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
