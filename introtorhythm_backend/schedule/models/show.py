@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 from datetime import datetime, timedelta
 from django.conf import settings
@@ -34,8 +35,15 @@ class Show(models.Model):
         ordering = ['date', 'start_time']
         unique_together = ['date', 'start_time']
 
-    def __str__(self):
-        return self.title
+    @property
+    def happening_now(self):
+        """
+        Returns True if the current time is between start_date_time and end_date_time.
+        """
+        now_local = timezone.localtime(timezone.now())  # now in local timezone
+        if self.start_date_time and self.end_date_time:
+            return self.start_date_time <= now_local <= self.end_date_time
+        return False
 
 
 @receiver(models.signals.pre_save, sender=Show)
@@ -57,18 +65,22 @@ def post_delete(sender, instance, using, **kwargs):
 
 def set_end_date_time(instance):
     """
-    Programatically sets the end date time field 
-    based on the start time and the duration.
+    Sets start_date_time and end_date_time as aware datetimes in the server's local timezone.
     """
-    start_date_time = datetime(
-        day=instance.date.day,
-        month=instance.date.month,
+    local_tz = timezone.get_current_timezone()
+
+    start_naive = datetime(
         year=instance.date.year,
+        month=instance.date.month,
+        day=instance.date.day,
         hour=instance.start_time
     )
 
-    instance.start_date_time = pytz.utc.localize(start_date_time) 
-    instance.end_date_time = instance.start_date_time + timedelta(hours=instance.duration)
+    # make aware in local TZ
+    start_local = timezone.make_aware(start_naive, local_tz)
+
+    instance.start_date_time = start_local
+    instance.end_date_time = start_local + timedelta(hours=instance.duration)
 
 
 def auto_delete_files_on_change(instance):
