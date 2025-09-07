@@ -1,48 +1,56 @@
-import axios, { AxiosError } from 'axios'
+import axios, { AxiosError, type AxiosResponse } from 'axios'
 
 const API = axios.create({
-    baseURL: axios.defaults.baseURL = "http://localhost:8000" // Django backend
+    baseURL: "http://localhost:8000" // Django backend
     // baseURL: process.env.VUE_APP_API_BASE_URL
 })
 
-const get = async (url: string) => {
+// Generic GET method
+const get = async <T>(url: string): Promise<T> => {
     try {
-        const response = await API.get(url);
-        return response;
+        const response: AxiosResponse<T> = await API.get(url)
+        return response.data
     } catch(err) {
         handleError(err as AxiosError)
+        throw err
     }
 }
 
-const post = async (url: string, payload: object) => {
+// Generic POST method
+const post = async <T>(url: string, payload: object): Promise<T> => {
     try {
-        const response = await API.post(url, payload)
-        return response
+        const response: AxiosResponse<T> = await API.post(url, payload)
+        return response.data
     } catch(err) {
         handleError(err as AxiosError)
+        throw err
     }
 }
 
-const put = async (url: string, payload: object) => {
+// Generic PUT method
+const put = async <T>(url: string, payload: object): Promise<T> => {
     try {
-        const response = await API.put(url, payload)
-        return response
+        const response: AxiosResponse<T> = await API.put(url, payload)
+        return response.data
     } catch(err) {
         handleError(err as AxiosError)
+        throw err
     }
 }
 
-const del = async (url: string, payload: object) => {
+// Generic DELETE method
+const del = async <T>(url: string, payload?: object): Promise<T> => {
     try {
-        const response = await API.delete(url, payload)
-        return response
+        const response: AxiosResponse<T> = await API.delete(url, { data: payload })
+        return response.data
     } catch(err) {
         handleError(err as AxiosError)
+        throw err
     }
 }
 
 const handleError = (error: AxiosError) => {
-    console.error('Error seen by apiClient', error.name, error.status, error.response)
+    console.error('API Error:', error.name, error.response?.status, error.response?.data)
     throw error
 }
 

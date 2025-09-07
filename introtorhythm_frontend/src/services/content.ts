@@ -1,11 +1,12 @@
+import type { MarqueeResponse } from "@/types";
 import apiClient from "./apiClient";
 
-export const fetchSchedule = async () => {
-    try {
-        const response = await apiClient.get('api/schedule/shows');
-        return response?.data;
-    } catch (error) {
-        console.error("Error fetching schedule content:", error);
-        throw error;
-    }
+
+export const fetchContent = async (): Promise<MarqueeResponse> => {
+  try {
+    return await apiClient.get<MarqueeResponse>('/api/content/');
+  } catch (error) {
+    console.error('Error fetching content:', error);
+    throw error;
+  }
 };

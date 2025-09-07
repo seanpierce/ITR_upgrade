@@ -1,26 +1,48 @@
-import { fetchSchedule } from '@/services/content';
 import { defineStore } from 'pinia'
-import { onMounted, ref } from 'vue'
+import { ref, onUnmounted } from 'vue'
+import { fetchContent } from '@/services/content'
+import type { MarqueeResponse } from '@/types'
 
 export const useContentStore = defineStore('content', () => {
-    // State
-    const currentShow = ref<string>();
-    const upcomingShows = ref<string>();
+  const marqueeText = ref<string>('')
+  const about = ref<MarqueeResponse['about']>(null)
 
-    const getSchedule = async () => {
-        const scheduleData = await fetchSchedule();
-        currentShow.value = "Current Show Title";
-        upcomingShows.value = "Upcoming Show Titles";
+  let refreshInterval: number | undefined
+
+  const loadContent = async () => {
+    try {
+      const data = await fetchContent()
+      marqueeText.value = data.marqueeText
+      about.value = data.about
+    } catch (err) {
+      console.error('Failed to fetch content:', err)
     }
+  }
 
-    // Getters
-    const getFullMarqueeText = () => '';
+  const startAutoRefresh = () => {
+    // Immediately load content
+    loadContent()
 
-    onMounted(async () => {
-        await getSchedule();
-    });
+    // Refresh every 2 minutes (120000 ms)
+    refreshInterval = window.setInterval(loadContent, 120000)
+  }
 
-    return {
-        getFullMarqueeText
+  const stopAutoRefresh = () => {
+    if (refreshInterval) {
+      clearInterval(refreshInterval)
+      refreshInterval = undefined
     }
+  }
+
+  // stop interval if/when store is no longer used
+  onUnmounted(() => {
+    stopAutoRefresh()
+  })
+
+  return {
+    marqueeText,
+    about,
+    startAutoRefresh,
+    stopAutoRefresh,
+  }
 })

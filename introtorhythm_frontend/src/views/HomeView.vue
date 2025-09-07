@@ -1,17 +1,20 @@
 <template>
   <div>
     <h1>Shows Today</h1>
-    <ShowCard v-for="show in shows" :key="show.id" :show="show" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted } from "vue";
-import { useShows } from "../composables/useShows";
-import ShowCard from "@/components/ShowCard.vue";
-const { shows, fetchShows } = useShows();
+import { onMounted, onUnmounted } from 'vue'
+import { useContentStore } from '@/stores/'
+
+const contentStore = useContentStore()
 
 onMounted(() => {
-  fetchShows();
-});
+  contentStore.startAutoRefresh()
+})
+
+onUnmounted(() => {
+  contentStore.stopAutoRefresh()
+})
 </script>

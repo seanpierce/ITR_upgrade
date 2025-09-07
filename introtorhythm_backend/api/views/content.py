@@ -18,9 +18,7 @@ class GetContentViewSet(viewsets.ViewSet):
 
     Returns:
     - `marqueeText`: string combining active MarqueeText, current show, and upcoming shows (times in Pacific Time, PST/PDT).
-    - `about`: first About record.
-    - `currentShow`: currently airing show (if any).
-    - `comingUp`: upcoming shows excluding the current show.
+    - `about`: Content for the about/info section of the website.
 
     Example marquee string:
     "{marquee text} | Listening Now: {current show} | Coming Up: {show1} at 02:00 PM PDT, {show2} at 05:00 PM PDT"
@@ -41,8 +39,6 @@ class GetContentViewSet(viewsets.ViewSet):
         about_text = About.objects.first()
 
         # Serialize content
-        current_show_data = ShowSerializer(current_show).data if current_show else None
-        coming_up_data = ShowSerializer(coming_up, many=True).data
         marquee_serializer_data = MarqueeTextSerializer(marquee_text_obj).data if marquee_text_obj else None
         about_serializer_data = AboutSerializer(about_text).data if about_text else None
 
@@ -51,9 +47,7 @@ class GetContentViewSet(viewsets.ViewSet):
 
         return Response({
             "marqueeText": marquee_content,
-            "about": about_serializer_data,
-            "currentShow": current_show_data,
-            "comingUp": coming_up_data,
+            "about": about_serializer_data
         })
 
     @staticmethod
