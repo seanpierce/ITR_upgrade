@@ -1,7 +1,5 @@
 asgiref==3.9.1
 async-timeout==5.0.1
-channels==4.3.1
-channels_redis==4.3.0
 Django==4.2
 django-ckeditor==6.7.3
 django-cors-headers==4.7.0
