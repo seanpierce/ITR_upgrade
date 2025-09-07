@@ -1,9 +1,10 @@
-<script setup lang="ts"></script>
-
 <template>
   <div id="container">
     <RouterView />
+    <About />
   </div>
 </template>
 
-<style scoped></style>
+<script lang="ts" setup>
+import About from '@/components/About.vue';
+</script>
