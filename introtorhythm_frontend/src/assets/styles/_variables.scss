@@ -1,0 +1,16 @@
+// Fonts
+$font-family: 'Roboto Mono', monospace;
+$font-family-2: 'Source Sans Pro', sans-serif;
+
+// Colors
+$color-dark-1: #1e2126;
+$color-dark-2: #333;
+$color-dark-3: #4a4d51;
+$color-lightgray: lightgray;
+$color-red: red;
+$color-orange: orange;
+
+// Layout
+$padding: 16px;
+$nav-height: 110px;
+$container-height: calc(100vh - #{$nav-height});

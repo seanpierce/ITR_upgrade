@@ -1,0 +1,21 @@
+.background-container {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 111px;
+  left: 0;
+
+  #bg {
+    width: 100%;
+    height: 100%;
+  }
+
+  #intro {
+    position: absolute;
+    top: calc(50% - 200px);
+    left: 50%;
+    max-width: 400px;
+    width: 100%;
+    transform: translateX(-50%);
+  }
+}

@@ -1,5 +1,7 @@
-* {color: red;}
-
-body {
-    box-sizing: border-box ;
-}
+@use './base.scss';
+@use './layout.scss';
+@use './background.scss';
+@use './buttons.scss';
+@use './marquee.scss';
+@use './chat.scss';
+@use './info.scss';

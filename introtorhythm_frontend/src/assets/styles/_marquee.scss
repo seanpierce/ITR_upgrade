@@ -1,0 +1,17 @@
+@use './variables.scss' as *;
+
+.marquee-wrapper {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  .marquee {
+    background: $color-orange;
+
+    * {
+      font-size: 5em;
+      color: #333;
+    }
+  }
+}

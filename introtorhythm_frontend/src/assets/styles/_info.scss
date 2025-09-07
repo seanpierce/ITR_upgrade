@@ -1,0 +1,28 @@
+@use './variables.scss' as *;
+
+#info {
+  position: absolute;
+  top: 100%;
+  width: 100%;
+  background: $color-orange;
+  padding-bottom: 4em;
+
+  #info-wrapper {
+    width: 90%;
+    max-width: 1200px;
+    margin: 1em auto;
+  }
+
+  #arrow {
+    font-size: 4em;
+  }
+
+  input#donate {
+    border: 2px solid $color-dark-2;
+    padding: 10px 22px;
+    color: $color-dark-2;
+    font-size: 2em;
+    background: $color-orange;
+    cursor: pointer;
+  }
+}
