@@ -4,9 +4,9 @@ from .models import MarqueeText, About
 class MarqueeTextSerializer(serializers.ModelSerializer):
     class Meta:
         model = MarqueeText
-        fields = '__all__'
+        fields = ['content'] 
 
 class AboutSerializer(serializers.ModelSerializer):
     class Meta:
         model = About
-        fields = '__all__'
+        fields = ['info']
