@@ -79,4 +79,4 @@ class GetContentViewSet(viewsets.ViewSet):
                 upcoming_parts.append(f"{show.title} at {formatted_time} {tz_name}")
             parts.append(f"Coming Up: {', '.join(upcoming_parts)}")
 
-        return " | ".join(parts)
+        return f"{' | '.join(parts)} | "
