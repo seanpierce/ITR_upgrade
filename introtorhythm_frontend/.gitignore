@@ -28,3 +28,7 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+.env.production
+# ignore local dev notes
+.env.notes
+chat-deployment-notes.txt
