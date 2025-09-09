@@ -39,7 +39,7 @@ io.on('connection', (socket) => {
   socket.emit('chatMessages', messages);
   socket.join('general');
 
-  socket.on('chatMessage', (username, msg) => {
+  socket.on('chatMessage', (username, msg, isItr = false) => {
     const now = Date.now();
     const messageData: ChatMessage = {
       id: Date.now(),
@@ -47,6 +47,7 @@ io.on('connection', (socket) => {
       text: msg,
       timestamp: now,
       friendlyTime: getTimeOfMessage(now),
+      isItr: isItr || false,
     };
 
     messages.push(messageData);

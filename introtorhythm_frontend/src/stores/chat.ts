@@ -8,6 +8,7 @@ export const useChatStore = defineStore('chat', () => {
   const messageInput = ref('');
   const usernameInput = ref('');
   const username = ref<string | null>(null);
+  const usernames = ref<string[]>([]);
   let socket: Socket | null = null;
 
   const connect = () => {
@@ -33,7 +34,18 @@ export const useChatStore = defineStore('chat', () => {
   const setUsername = () => {
     if (!usernameInput.value.trim() || !socket) return;
     username.value = usernameInput.value;
+    usernames.value.push(usernameInput.value);
     usernameInput.value = '';
+    localStorage.setItem('chatUsername', username.value);
+    sendITRMessage(`${username.value} has joined the chat`);
+  };
+
+  const unsetUsername = () => {
+    if (!socket || !username.value) return;
+    sendITRMessage(`${username.value} has left the chat`);
+    usernames.value = usernames.value.filter((u) => u !== username.value);
+    username.value = null;
+    localStorage.removeItem('chatUsername');
   };
 
   const isUsernameUnique = () => {
@@ -42,6 +54,24 @@ export const useChatStore = defineStore('chat', () => {
       return false;
     }
     return true;
+  };
+
+  const numberOfActiveUsers = () => {
+    return usernames.value.length;
+  };
+
+  const getUsernameFromLocalStorage = () => {
+    const storedUsername = localStorage.getItem('chatUsername');
+    if (storedUsername) {
+      usernameInput.value = storedUsername;
+      setUsername();
+    }
+  };
+
+  const sendITRMessage = (text: string) => {
+    if (!socket) return;
+    const isItr = true;
+    socket.emit('chatMessage', 'ITR', text, isItr);
   };
 
   return {
@@ -53,5 +83,8 @@ export const useChatStore = defineStore('chat', () => {
     sendMessage,
     setUsername,
     isUsernameUnique,
+    unsetUsername,
+    numberOfActiveUsers,
+    getUsernameFromLocalStorage,
   };
 });

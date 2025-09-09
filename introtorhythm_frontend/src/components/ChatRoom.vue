@@ -21,9 +21,15 @@
       <!-- Chat messages and input -->
       <div v-if="username">
         <div id="messages">
+          <div id="messages-header">
+            Username: <span class="red">{{ username }}</span> |
+            <span @click="chatStore.unsetUsername" class="pointer bold logout">LOGOUT</span>
+          </div>
           <div v-for="msg in messages" :key="msg.id" class="message">
             <span class="time-stamp">{{ msg.friendlyTime }}</span>
-            <span :class="{ me: msg.username === username }">{{ msg.username }}</span
+            <span class="username" :class="{ me: msg.username === username, isItr: msg.isItr }">{{
+              msg.username
+            }}</span
             >: {{ msg.text }}
           </div>
         </div>
@@ -64,5 +70,6 @@ const setUsername = () => {
 
 onMounted(() => {
   chatStore.connect();
+  chatStore.getUsernameFromLocalStorage();
 });
 </script>
