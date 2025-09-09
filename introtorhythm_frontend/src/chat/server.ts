@@ -16,10 +16,20 @@ let messages: ChatMessage[] = [];
 const MESSAGE_LIMIT = 300;
 const MESSAGE_TTL = 12 * 60 * 60 * 1000; // 12 hours in ms
 
-function purgeOldMessages() {
+const purgeOldMessages = () => {
   const cutoff = Date.now() - MESSAGE_TTL;
   messages = messages.filter((m: ChatMessage) => m.timestamp >= cutoff);
-}
+};
+
+const getTimeOfMessage = (ms: number): string => {
+  const date = new Date(ms);
+  return date
+    .toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+    .replace(/\s?[AP]M$/, ''); // remove AM/PM
+};
 
 // Run purge every 5 minutes
 setInterval(purgeOldMessages, 5 * 60 * 1000);
@@ -29,12 +39,14 @@ io.on('connection', (socket) => {
   socket.emit('chatMessages', messages);
   socket.join('general');
 
-  socket.on('chatMessage', (msg) => {
+  socket.on('chatMessage', (username, msg) => {
+    const now = Date.now();
     const messageData: ChatMessage = {
       id: Date.now(),
-      username: 'User',
+      username: username,
       text: msg,
-      timestamp: Date.now(),
+      timestamp: now,
+      friendlyTime: getTimeOfMessage(now),
     };
 
     messages.push(messageData);

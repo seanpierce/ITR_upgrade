@@ -9,6 +9,7 @@ export interface About {
 
 export interface ChatMessage {
   timestamp: number;
+  friendlyTime: string;
   id: number;
   username?: string;
   text: string;

@@ -2,7 +2,7 @@
 
 #chat {
   position: relative;
-  min-height: 50vh;
+  // min-height: 50vh;
   width: 100%;
   background: $color-orange;
   padding: 4em 0;
@@ -44,6 +44,10 @@
         color: white;
       }
 
+      .username-unique-error {
+        margin-bottom: 24px;
+      }
+
       button {
         width: 100%;
         font-size: 1em;
@@ -78,6 +82,10 @@
       margin-left: 8px;
       color: white;
 
+      .me {
+        color: $color-red !important;
+      }
+
       &.itr {
         color: $color-orange !important;
 
@@ -89,6 +97,7 @@
       .time-stamp {
         font-size: 0.74em;
         margin-right: 12px;
+        color: white;
       }
 
       .username.me {
