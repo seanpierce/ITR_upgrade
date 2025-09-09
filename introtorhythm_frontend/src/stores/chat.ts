@@ -14,8 +14,9 @@ export const useChatStore = defineStore('chat', () => {
 
   const connect = () => {
     const socketUrl = import.meta.env.VITE_SOCKET_URL;
+    console.log('Connecting to Socket.IO server at', socketUrl);
     socket = io(socketUrl, {
-      transports: ['websocket'],
+      transports: ['websocket', 'polling'],
     });
 
     socket.on('connect', () => console.log('Connected to Socket.IO server'));
