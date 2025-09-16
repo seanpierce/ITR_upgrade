@@ -14,13 +14,14 @@ const io = new Server(server, {
 
 let messages: ChatMessage[] = [];
 const MESSAGE_LIMIT = 300;
-const MESSAGE_TTL = 12 * 60 * 60 * 1000; // 12 hours in ms
+const MESSAGE_TTL = 43200000; // 12 hours in milliseconds
+const runPurgeTime = 300000; // 5 minutes in milliseconds
 
-const purgeOldMessages = () => {
-  const cutoff = Date.now() - MESSAGE_TTL;
-  messages = messages.filter((m: ChatMessage) => m.timestamp >= cutoff);
-};
-
+/**
+ * Get the time of a message in HH:MM format
+ * @param ms - timestamp in milliseconds
+ * @returns formatted time string without AM/PM - Example: "08:32"
+ */
 const getTimeOfMessage = (ms: number): string => {
   const date = new Date(ms);
   return date
@@ -31,8 +32,13 @@ const getTimeOfMessage = (ms: number): string => {
     .replace(/\s?[AP]M$/, ''); // remove AM/PM
 };
 
+const purgeOldMessages = () => {
+  const cutoff = Date.now() - MESSAGE_TTL;
+  messages = messages.filter((m: ChatMessage) => m.timestamp >= cutoff);
+};
+
 // Run purge every 5 minutes
-setInterval(purgeOldMessages, 5 * 60 * 1000);
+setInterval(purgeOldMessages, runPurgeTime);
 
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
@@ -42,7 +48,7 @@ io.on('connection', (socket) => {
   socket.on('chatMessage', (username, msg, isItr = false) => {
     const now = Date.now();
     const messageData: ChatMessage = {
-      id: Date.now(),
+      id: `${username}_${now}`,
       username: username,
       text: msg,
       timestamp: now,
@@ -52,15 +58,11 @@ io.on('connection', (socket) => {
 
     messages.push(messageData);
 
+    // if messages exceed limit, remove oldest
     if (messages.length > MESSAGE_LIMIT) {
       messages = messages.slice(-MESSAGE_LIMIT);
     }
-    setTimeout(
-      () => {
-        messages = messages.filter((m) => m.id !== messageData.id);
-      },
-      24 * 60 * 60 * 1000,
-    );
+
     io.to('general').emit('chatMessages', [messageData]);
   });
 
