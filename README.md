@@ -102,4 +102,4 @@ cd [project root]/introtorhythm_frontend/src/chat
 node ./server.ts
 ```
 
-![Intro To Rhythm Logo](introtorhythm_frontend\src\assets\images\i2r-bg-big-tall.png)
+![Intro To Rhythm Logo](introtorhythm_frontend/src/assets/images/i2r-bg-big-tall.png)
