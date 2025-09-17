@@ -15,3 +15,8 @@ export interface ChatMessage {
   timestamp: number;
   friendlyTime: string;
 }
+
+export interface ChatUser {
+  socketId: string;
+  username: string;
+}

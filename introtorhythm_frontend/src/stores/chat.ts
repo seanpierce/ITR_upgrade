@@ -8,17 +8,30 @@ export const useChatStore = defineStore('chat', () => {
   const messageInput = ref('');
   const usernameInput = ref('');
   const username = ref<string | null>(null);
-  const usernames = ref<string[]>([]);
+  const usernameError = ref<string | null>(null);
   let socket: Socket | null = null;
 
-  const connect = () => {
+  const connect = (name: string) => {
+    if (socket) socket.disconnect();
+
     const socketUrl = import.meta.env.VITE_SOCKET_URL;
-    console.log('Connecting to Socket.IO server at', socketUrl);
-    socket = io(socketUrl, {
-      transports: ['websocket', 'polling'],
+    socket = io(socketUrl, { transports: ['websocket', 'polling'] });
+
+    socket.on('connect', () => {
+      socket?.emit('join', name);
     });
 
-    socket.on('connect', () => console.log('Connected to Socket.IO server'));
+    socket.on('joinSuccess', (uname: string) => {
+      username.value = uname;
+      usernameError.value = null;
+      localStorage.setItem('chatUsername', uname);
+    });
+
+    socket.on('joinError', (err: string) => {
+      usernameError.value = err;
+      username.value = null;
+      socket?.disconnect();
+    });
 
     socket.on('chatMessages', (msgs: ChatMessage[]) => {
       messages.value.push(...msgs);
@@ -26,52 +39,28 @@ export const useChatStore = defineStore('chat', () => {
   };
 
   const sendMessage = () => {
-    if (!messageInput.value.trim() || !socket) return;
+    if (!messageInput.value.trim() || !socket || !username.value) return;
     socket.emit('chatMessage', username.value, messageInput.value);
     messageInput.value = '';
   };
 
   const setUsername = () => {
-    if (!usernameInput.value.trim() || !socket) return;
-    username.value = usernameInput.value;
-    usernames.value.push(usernameInput.value);
-    usernameInput.value = '';
-    localStorage.setItem('chatUsername', username.value);
-    sendITRMessage(`${username.value} has joined the chat`);
+    if (!usernameInput.value.trim()) return;
+    connect(usernameInput.value.trim());
   };
 
   const unsetUsername = () => {
     if (!socket || !username.value) return;
-    sendITRMessage(`${username.value} has left the chat`);
-    usernames.value = usernames.value.filter((u) => u !== username.value);
     username.value = null;
     localStorage.removeItem('chatUsername');
-  };
-
-  const isUsernameUnique = () => {
-    const names = messages.value.map((m) => m.username?.toLowerCase());
-    if (usernameInput.value && names.includes(usernameInput.value.toLowerCase())) {
-      return false;
-    }
-    return true;
-  };
-
-  const numberOfActiveUsers = () => {
-    return usernames.value.length;
+    socket.disconnect();
   };
 
   const getUsernameFromLocalStorage = () => {
-    const storedUsername = localStorage.getItem('chatUsername');
-    if (storedUsername) {
-      usernameInput.value = storedUsername;
-      setUsername();
+    const stored = localStorage.getItem('chatUsername');
+    if (stored) {
+      connect(stored);
     }
-  };
-
-  const sendITRMessage = (text: string) => {
-    if (!socket) return;
-    const isItr = true;
-    socket.emit('chatMessage', 'ITR', text, isItr);
   };
 
   return {
@@ -79,12 +68,11 @@ export const useChatStore = defineStore('chat', () => {
     messageInput,
     usernameInput,
     username,
+    usernameError,
     connect,
     sendMessage,
     setUsername,
-    isUsernameUnique,
     unsetUsername,
-    numberOfActiveUsers,
     getUsernameFromLocalStorage,
   };
 });

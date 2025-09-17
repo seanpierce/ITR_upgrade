@@ -12,27 +12,34 @@
             maxlength="200"
           />
           <!-- Show error if username is not unique -->
-          <div v-if="usernameUniqueError" class="username-unique-error error">
-            Username already exists. Please choose another one.
+          <div v-if="chatStore.usernameError" class="username-unique-error error">
+            {{ chatStore.usernameError }}
           </div>
           <button @click="setUsername">Join Chat</button>
         </div>
       </div>
+
       <!-- Chat messages and input -->
-      <div v-if="username">
+      <div v-else>
         <div id="messages">
           <div id="messages-header">
             Username: <span class="red">{{ username }}</span> |
             <span @click="chatStore.unsetUsername" class="pointer bold logout">LOGOUT</span>
           </div>
-          <div v-for="msg in messages" :key="msg.id" class="message">
+          <div
+            v-for="msg in messages"
+            :key="msg.id"
+            class="message"
+          >
             <span class="time-stamp">{{ msg.friendlyTime }}</span>
-            <span class="username" :class="{ me: msg.username === username, isItr: msg.isItr }">{{
-              msg.username
-            }}</span
+            <span
+              class="username"
+              :class="{ me: msg.username === username, isItr: msg.isItr }"
+              >{{ msg.username }}</span
             >: {{ msg.text }}
           </div>
         </div>
+
         <div id="message-input">
           <input
             id="message-input-field"
@@ -55,21 +62,15 @@ import { useChatStore } from '@/stores/chat';
 import { storeToRefs } from 'pinia';
 
 const chatStore = useChatStore();
-
 const { username, messages } = storeToRefs(chatStore);
-const usernameUniqueError = ref(false);
 
 const setUsername = () => {
-  usernameUniqueError.value = false;
-  if (!chatStore.isUsernameUnique()) {
-    usernameUniqueError.value = true;
-    return;
-  }
+  // clear previous error
+  chatStore.usernameError = null;
   chatStore.setUsername();
 };
 
 onMounted(() => {
-  chatStore.connect();
   chatStore.getUsernameFromLocalStorage();
 });
 </script>
