@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -30,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'simpleui',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -88,6 +90,8 @@ TEMPLATES = [
         },
     },
 ]
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 WSGI_APPLICATION = 'introtorhythm_backend.wsgi.application'
 
