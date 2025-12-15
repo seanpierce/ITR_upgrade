@@ -47,7 +47,6 @@ const sendSystemMessage = (text: string) => {
   io.to('general').emit('chatMessages', [msg]);
 };
 
-
 io.on('connection', (socket) => {
   console.log('Socket connected:', socket.id);
 
@@ -114,26 +113,31 @@ io.on('connection', (socket) => {
     io.to('general').emit('chatMessages', [messageData]);
   });
 
-  // Disconnect handling
-  socket.on('disconnect', () => {
-    const user = Array.from(users.values()).find(
-      (u) => u.socketId === socket.id,
-    );
+  // Logout handling.
+  // This differs from disconnects as it is immediate.
+  socket.on('logout', () => {
+    const user = Array.from(users.values()).find((u) => u.socketId === socket.id);
     if (!user) return;
 
-    console.log(`User ${user.username} disconnected, starting grace period`);
+    users.delete(user.username);
+    io.emit('userList', Array.from(users.keys()));
+    sendSystemMessage(`${user.username} has left the chat`);
+  });
+
+  // Disconnect handling.
+  // This differs from logout as it allows a grace period for reconnects.
+  socket.on('disconnect', (description: string = '') => {
+    console.log('description: ', description);
+    const user = Array.from(users.values()).find((u) => u.socketId === socket.id);
+    if (!user) return;
 
     // Start grace period before removing user
     const timer = setTimeout(() => {
       users.delete(user.username);
       disconnectTimers.delete(user.username);
       io.emit('userList', Array.from(users.keys()));
-      console.log(`${user.username} logged out`);
+      sendSystemMessage(`${user.username} has left the chat`);
     }, DISCONNECT_GRACE);
-
-
-    // system leave message
-    sendSystemMessage(`${user.username} has left the chat`);
 
     disconnectTimers.set(user.username, timer);
   });

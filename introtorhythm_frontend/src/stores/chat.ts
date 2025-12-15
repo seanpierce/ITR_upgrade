@@ -47,13 +47,14 @@ export const useChatStore = defineStore('chat', () => {
   const setUsername = () => {
     if (!usernameInput.value.trim()) return;
     connect(usernameInput.value.trim());
+    usernameInput.value = '';
   };
 
   const unsetUsername = () => {
     if (!socket || !username.value) return;
     username.value = null;
     localStorage.removeItem('chatUsername');
-    socket.disconnect();
+    socket.emit('logout');
   };
 
   const getUsernameFromLocalStorage = () => {
