@@ -34,7 +34,11 @@ export const useChatStore = defineStore('chat', () => {
     });
 
     socket.on('chatMessages', (msgs: ChatMessage[]) => {
-      messages.value.push(...msgs);
+      // Filter out duplicates
+      const messagesToPush = msgs.filter(
+        (m) => !messages.value.find((existing) => existing.id === m.id),
+      );
+      messages.value.push(...messagesToPush);
     });
   };
 
