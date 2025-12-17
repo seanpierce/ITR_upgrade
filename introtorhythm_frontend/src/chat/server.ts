@@ -2,7 +2,7 @@ import express from 'express';
 import http from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
-import type { ChatMessage, ChatUser } from '@/types';
+import { SocketConfig as sock, type ChatMessage, type ChatUser } from '@/types';
 
 const app = express();
 app.use(cors());
@@ -43,20 +43,18 @@ const sendSystemMessage = (text: string) => {
     isItr: true,
   };
   messages.push(msg);
-  console.log(messages, msg)
-  io.to('general').emit('chatMessages', [msg]);
+  console.log(messages, msg);
+  io.to('general').emit(sock.CHAT_MESSAGES, [msg]);
 };
 
-io.on('connection', (socket) => {
-  console.log('Socket connected:', socket.id);
-
+io.on(sock.CONNECTION, (socket) => {
   // Send chat history on connect
-  socket.emit('chatMessages', messages);
+  socket.emit(sock.CHAT_MESSAGES, messages);
 
   socket.join('general');
 
   // Handle join request
-  socket.on('join', (username: string) => {
+  socket.on(sock.JOIN, (username: string) => {
     if (!username) return;
 
     // If username already exists
@@ -67,13 +65,12 @@ io.on('connection', (socket) => {
         clearTimeout(timer);
         disconnectTimers.delete(username);
         users.set(username, { socketId: socket.id, username });
-        socket.emit('joinSuccess', username);
-        io.emit('userList', Array.from(users.keys()));
-        console.log(`${username} reconnected`);
+        socket.emit(sock.JOIN_SUCCESS, username);
+        io.emit(sock.USER_LIST, Array.from(users.keys()));
         return;
       }
 
-      socket.emit('joinError', 'Username already taken');
+      socket.emit(sock.JOIN_ERROR, 'Username already taken');
       socket.disconnect();
       return;
     }
@@ -82,17 +79,15 @@ io.on('connection', (socket) => {
     const newUser: ChatUser = { socketId: socket.id, username };
     users.set(username, newUser);
 
-    console.log(`${username} joined`);
+    io.emit(sock.USER_LIST, Array.from(users.keys()));
+    socket.emit(sock.JOIN_SUCCESS, username);
 
-    io.emit('userList', Array.from(users.keys()));
-    socket.emit('joinSuccess', username);
-
-    // 🔥 system join message
+    // System join message
     sendSystemMessage(`${username} has joined the chat`);
   });
 
   // Chat messages
-  socket.on('chatMessage', (username, msg, isItr = false) => {
+  socket.on(sock.CHAT_MESSAGE, (username: string, msg: string, isItr = false) => {
     if (!users.has(username)) return;
 
     const now = Date.now();
@@ -110,24 +105,23 @@ io.on('connection', (socket) => {
       messages = messages.slice(-MESSAGE_LIMIT);
     }
 
-    io.to('general').emit('chatMessages', [messageData]);
+    io.to('general').emit(sock.CHAT_MESSAGES, [messageData]);
   });
 
   // Logout handling.
   // This differs from disconnects as it is immediate.
-  socket.on('logout', () => {
+  socket.on(sock.LOGOUT, () => {
     const user = Array.from(users.values()).find((u) => u.socketId === socket.id);
     if (!user) return;
 
     users.delete(user.username);
-    io.emit('userList', Array.from(users.keys()));
+    io.emit(sock.USER_LIST, Array.from(users.keys()));
     sendSystemMessage(`${user.username} has left the chat`);
   });
 
   // Disconnect handling.
   // This differs from logout as it allows a grace period for reconnects.
-  socket.on('disconnect', (description: string = '') => {
-    console.log('description: ', description);
+  socket.on(sock.DISCONNECT, () => {
     const user = Array.from(users.values()).find((u) => u.socketId === socket.id);
     if (!user) return;
 
@@ -135,7 +129,7 @@ io.on('connection', (socket) => {
     const timer = setTimeout(() => {
       users.delete(user.username);
       disconnectTimers.delete(user.username);
-      io.emit('userList', Array.from(users.keys()));
+      io.emit(sock.USER_LIST, Array.from(users.keys()));
       sendSystemMessage(`${user.username} has left the chat`);
     }, DISCONNECT_GRACE);
 

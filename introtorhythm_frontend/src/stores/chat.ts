@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { io, Socket } from 'socket.io-client';
-import type { ChatMessage } from '@/types';
+import { SocketConfig as sock, type ChatMessage } from '@/types';
 
 export const useChatStore = defineStore('chat', () => {
   const messages = ref<ChatMessage[]>([]);
@@ -17,23 +17,23 @@ export const useChatStore = defineStore('chat', () => {
     const socketUrl = import.meta.env.VITE_SOCKET_URL;
     socket = io(socketUrl, { transports: ['websocket', 'polling'] });
 
-    socket.on('connect', () => {
-      socket?.emit('join', name);
+    socket.on(sock.CONNECTION, () => {
+      socket?.emit(sock.JOIN, name);
     });
 
-    socket.on('joinSuccess', (uname: string) => {
+    socket.on(sock.JOIN_SUCCESS, (uname: string) => {
       username.value = uname;
       usernameError.value = null;
-      localStorage.setItem('chatUsername', uname);
+      localStorage.setItem(sock.GET_LOCAL_USERNAME, uname);
     });
 
-    socket.on('joinError', (err: string) => {
+    socket.on(sock.JOIN_ERROR, (err: string) => {
       usernameError.value = err;
       username.value = null;
       socket?.disconnect();
     });
 
-    socket.on('chatMessages', (msgs: ChatMessage[]) => {
+    socket.on(sock.CHAT_MESSAGES, (msgs: ChatMessage[]) => {
       // Filter out duplicates
       const messagesToPush = msgs.filter(
         (m) => !messages.value.find((existing) => existing.id === m.id),
@@ -44,7 +44,7 @@ export const useChatStore = defineStore('chat', () => {
 
   const sendMessage = () => {
     if (!messageInput.value.trim() || !socket || !username.value) return;
-    socket.emit('chatMessage', username.value, messageInput.value);
+    socket.emit(sock.CHAT_MESSAGE, username.value, messageInput.value);
     messageInput.value = '';
   };
 
@@ -57,14 +57,14 @@ export const useChatStore = defineStore('chat', () => {
   const unsetUsername = () => {
     if (!socket || !username.value) return;
     username.value = null;
-    localStorage.removeItem('chatUsername');
-    socket.emit('logout');
+    localStorage.removeItem(sock.GET_LOCAL_USERNAME);
+    socket.emit(sock.LOGOUT);
   };
 
   const getUsernameFromLocalStorage = () => {
-    const stored = localStorage.getItem('chatUsername');
-    if (stored) {
-      connect(stored);
+    const username = localStorage.getItem(sock.GET_LOCAL_USERNAME);
+    if (username) {
+      connect(username);
     }
   };
 
