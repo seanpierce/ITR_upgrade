@@ -1,7 +1,6 @@
 asgiref==3.9.1
 async-timeout==5.0.1
 Django==4.2
-django-ckeditor==6.7.3
 django-cors-headers==4.7.0
 django-js-asset==3.1.2
 django-simpleui==2025.6.24

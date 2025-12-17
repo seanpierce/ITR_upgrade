@@ -35,7 +35,6 @@ ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
 # Application definition
 
 INSTALLED_APPS = [
-    'simpleui',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -44,10 +43,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
+    'tinymce',
     'api',
     'schedule',
     'content',
-    "ckeditor",
 ]
 
 MIDDLEWARE = [
@@ -146,3 +145,21 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+TINYMCE_DEFAULT_CONFIG = {
+    'height': 360,
+    'width': '100%',
+    'cleanup_on_startup': True,
+    'custom_undo_redo_levels': 20,
+    'selector': 'textarea',
+    'plugins': (
+        'advlist autolink lists link image charmap preview anchor '
+        'searchreplace visualblocks code fullscreen '
+        'insertdatetime media table help wordcount'
+    ),
+    'toolbar': (
+        'undo redo | bold italic underline | '
+        'alignleft aligncenter alignright | '
+        'bullist numlist | link image | code fullscreen'
+    ),
+}
