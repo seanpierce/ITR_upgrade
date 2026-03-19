@@ -2,7 +2,7 @@ import express from 'express';
 import http from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
-import { SocketConfig as sock, type ChatMessage, type ChatUser } from '@/types';
+import { SocketConfig as sock, type ChatMessage, type ChatUser } from '../types/index.ts';
 
 const app = express();
 app.use(cors());
