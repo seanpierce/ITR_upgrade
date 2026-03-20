@@ -17,7 +17,7 @@ export const useChatStore = defineStore('chat', () => {
     const socketUrl = import.meta.env.VITE_SOCKET_URL;
     socket = io(socketUrl, { transports: ['websocket', 'polling'] });
 
-    socket.on(sock.CONNECTION, () => {
+    socket.on(sock.CONNECT, () => {
       socket?.emit(sock.JOIN, name);
     });
 
@@ -42,6 +42,10 @@ export const useChatStore = defineStore('chat', () => {
     });
   };
 
+  const resetUsernameError = () => {
+    usernameError.value = null;
+  }
+
   const sendMessage = () => {
     if (!messageInput.value.trim() || !socket || !username.value) return;
     socket.emit(sock.CHAT_MESSAGE, username.value, messageInput.value);
@@ -49,8 +53,9 @@ export const useChatStore = defineStore('chat', () => {
   };
 
   const setUsername = () => {
-    if (!usernameInput.value.trim()) return;
-    connect(usernameInput.value.trim());
+    const trimmed = usernameInput.value.trim();
+    if (!trimmed) return;
+    connect(trimmed);
     usernameInput.value = '';
   };
 
@@ -79,5 +84,6 @@ export const useChatStore = defineStore('chat', () => {
     setUsername,
     unsetUsername,
     getUsernameFromLocalStorage,
+    resetUsernameError,
   };
 });

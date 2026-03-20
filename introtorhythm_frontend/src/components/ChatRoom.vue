@@ -61,7 +61,7 @@ const { username, messages } = storeToRefs(chatStore);
 
 const setUsername = () => {
   // clear previous error
-  chatStore.usernameError = null;
+  chatStore.resetUsernameError();
   chatStore.setUsername();
 };
 

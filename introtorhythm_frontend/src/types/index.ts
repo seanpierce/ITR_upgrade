@@ -23,6 +23,7 @@ export interface ChatUser {
 
 export const SocketConfig = {
   CONNECTION: 'connection',
+  CONNECT: 'connect',
   DISCONNECT: 'disconnect',
   CHAT_MESSAGES: 'chatMessages',
   JOIN: 'join',
