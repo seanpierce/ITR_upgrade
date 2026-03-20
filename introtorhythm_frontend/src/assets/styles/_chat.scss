@@ -89,15 +89,11 @@
       }
 
       .username {
-        color: white;
+        color: $color-orange;
         
         &.me {
           color: $color-red;
         }
-
-        &.isItr {
-        color: $color-orange !important;
-      }
       }
     }
   }

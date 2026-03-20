@@ -28,7 +28,7 @@
           </div>
           <div v-for="msg in messages" :key="msg.id" class="message">
             <span class="time-stamp">{{ msg.friendlyTime }}</span>
-            <span class="username" :class="{ me: msg.username === username, isItr: msg.isItr }">{{
+            <span class="username" :class="{ me: msg.username === username }">{{
               msg.username
             }}</span
             >: {{ msg.text }}
