@@ -22,8 +22,8 @@ export interface ChatUser {
 }
 
 export const SocketConfig = {
-  CONNECTION: 'connection',
-  CONNECT: 'connect',
+  CONNECTION: 'connection', // for server 'connection' event
+  CONNECT: 'connect', // for client-side 'connect' event
   DISCONNECT: 'disconnect',
   CHAT_MESSAGES: 'chatMessages',
   JOIN: 'join',
