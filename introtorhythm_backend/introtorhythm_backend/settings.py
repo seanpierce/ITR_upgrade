@@ -163,3 +163,6 @@ TINYMCE_DEFAULT_CONFIG = {
         'bullist numlist | link image | code fullscreen'
     ),
 }
+
+if not DEBUG:
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
