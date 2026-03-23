@@ -1,8 +1,7 @@
 import axios, { AxiosError, type AxiosResponse } from 'axios'
 
 const API = axios.create({
-    baseURL: "http://localhost:8000" // Django backend
-    // baseURL: process.env.VUE_APP_API_BASE_URL
+    baseURL: process.env.VUE_APP_API_BASE_URL
 })
 
 // Generic GET method
