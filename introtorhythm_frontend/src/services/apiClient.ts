@@ -1,7 +1,7 @@
 import axios, { AxiosError, type AxiosResponse } from 'axios'
 
 const API = axios.create({
-    baseURL: process.env.VUE_APP_API_BASE_URL
+    baseURL: import.meta.env.VITE_API_URL
 })
 
 // Generic GET method

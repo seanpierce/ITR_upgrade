@@ -1,2 +1,4 @@
 .env
 .vscode/
+introtorhythm_frontend/src/chat/server.js
+introtorhythm_frontend/src/types/index.js

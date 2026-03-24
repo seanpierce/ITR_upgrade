@@ -1,14 +1,18 @@
+// Locally run using npx: npx tsx src/chat/server.ts
+// On the server use pm2 or similar to run dist/chat/server.js after compiling ts to js with tsc: npx tsc --project tsconfig.server.json
+
 import express from 'express';
-import http from 'http';
+import * as http from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
-import { SocketConfig as sock, type ChatMessage, type ChatUser } from '../types/index.ts';
+import { SocketConfig as sock, type ChatMessage, type ChatUser } from '../types/index.js'; // I know, I know, but this makes sense when compiling ts to js on the server
 
 const app = express();
 app.use(cors());
 
 const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: '*' } });
+// Use process and not import.env here since this is technically not part of the vite app, but a separate node server.
+const io = new Server(server, { cors: { origin: process.env.VITE_CORS_ORIGIN } });
 
 let messages: ChatMessage[] = [];
 const users: Map<string, ChatUser> = new Map(); // username -> user
