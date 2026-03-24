@@ -25,17 +25,18 @@ Questions and comments: **hello@introtorhythm.com**
 
 In this upgrade:  
 
-- **Frameworks**: Django `3.x → 4.x`, Vue `2.x → 3.x`  
-- **Dependencies**: Updated across the board  
-- **Features**: Some deprecated features removed, core features modernized  
+- **Frameworks**: Django `3.x → 4.x`, Vue `2.x → 3.x`
+- **Dependencies**: Updated across the board
+- **Typescript**: All `.js` will now be `.ts` (because I hate myself)
+- **Features**: Some deprecated features removed, core features modernized
 
 ---
 
 ### What’s Staying
 
 - **Streaming**: Live, pre-recorded, and syndicated shows  
-- **Chat**: Rebuilt with Socket.io (moving away from Firebase)  
-- **Content API**: Migrating from a custom solution to Django REST Framework + model serialization (easier to maintain and industry-standard)  
+- **Chat**: Rebuilt with Socket.io and typescript (moving away from Firebase)  
+- **Content API**: Migrating from the existing custom solution (class-based views as API endpoints) to Django REST Framework + model serialization (easier to maintain and industry-standard)  
 - **Automated scheduling**: Existing cron + Python script system remains, with room for improvements  
 
 ---
@@ -54,6 +55,7 @@ In this upgrade:
 
 - **Python** 3.13.7  
 - **Node** 26.7.0  
+- **npx** 11.9.0 (typescript compiler)
 
 ---
 
@@ -92,14 +94,15 @@ python manage.py runserver
 cd [project root]/introtorhythm_frontend
 npm install
 
-# Configure .env variables - reference the .env.example file for reference. Create a .env.local and a .env.production file and add the example keys and values.
+# Configure Vite .env variables - reference the .env.example file for reference. Create a .env.local  file and add the example keys and values.
 
 # Run FE local dev server
 npm run dev
 
 # Run chat app local dev server
 cd [project root]/introtorhythm_frontend/src/chat
-node ./server.ts
+npx tsc --project tsconfig.server.json # compile the server code
+node serrver.js # run the process
 ```
 
 ![Intro To Rhythm Logo](introtorhythm_frontend/src/assets/images/i2r-bg-big-tall.png)

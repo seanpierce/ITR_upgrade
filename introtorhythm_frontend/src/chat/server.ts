@@ -1,6 +1,5 @@
-// Locally run using npx: npx tsx src/chat/server.ts
-// On the server use pm2 or similar to run dist/chat/server.js after compiling ts to js with tsc: npx tsc --project tsconfig.server.json
-
+// Locally run using node path/to/server.js after compiling ts to js with tsc: npx tsc --project tsconfig.server.json
+// On the server use pm2 or similar to run dist/chat/server.js
 import express from 'express';
 import * as http from 'http';
 import { Server } from 'socket.io';

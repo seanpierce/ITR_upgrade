@@ -29,6 +29,11 @@ coverage
 
 *.tsbuildinfo
 .env.production
-# ignore local dev notes
+# Ignore local dev notes
 .env.notes
 chat-deployment-notes.txt
+
+# Ignore compiled server files, since the server is run separately from the vite app and doesn't need to be tracked in git. 
+# This also prevents accidentally committing secrets if they are used in the server code.
+*src/chat/server.js
+*src/types/index.js
