@@ -12,22 +12,26 @@ export const useChatStore = defineStore('chat', () => {
   let socket: Socket | null = null;
 
   const connect = (name: string) => {
+    console.log('Connecting with username:', name);
     if (socket) socket.disconnect();
 
     const socketUrl = import.meta.env.VITE_SOCKET_URL;
     socket = io(socketUrl, { transports: ['websocket', 'polling'] });
 
     socket.on(sock.CONNECT, () => {
+      console.log('Socket connected');
       socket?.emit(sock.JOIN, name);
     });
 
     socket.on(sock.JOIN_SUCCESS, (uname: string) => {
+      console.log('Join successful with username:', uname);
       username.value = uname;
       usernameError.value = null;
       localStorage.setItem(sock.GET_LOCAL_USERNAME, uname);
     });
 
     socket.on(sock.JOIN_ERROR, (err: string) => {
+      console.error('Join error:', err);
       usernameError.value = err;
       username.value = null;
       socket?.disconnect();
@@ -54,6 +58,7 @@ export const useChatStore = defineStore('chat', () => {
 
   const setUsername = () => {
     const trimmed = usernameInput.value.trim();
+    console.log('Attempting to set username:', trimmed);
     if (!trimmed) return;
     connect(trimmed);
     usernameInput.value = '';
