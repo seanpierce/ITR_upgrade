@@ -6,8 +6,6 @@ from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.db import models
 from django.dispatch import receiver
-import pytz
-
 from schedule.helpers import TIMES, DURATION
 
 

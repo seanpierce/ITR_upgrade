@@ -1,18 +1,14 @@
 from datetime import datetime
-import pytz
 
-from rest_framework import viewsets
+import pytz
+from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from content.models import MarqueeText, About
 from content.serializers import MarqueeTextSerializer, AboutSerializer
 from schedule.models import Show
-from schedule.serializers import ShowSerializer
 
-PACIFIC = pytz.timezone("America/Los_Angeles")
-
-
-class GetContentViewSet(viewsets.ViewSet):
+class GetContentAPIView(APIView):
     """
     API endpoint to retrieve core website content.
 
@@ -24,7 +20,7 @@ class GetContentViewSet(viewsets.ViewSet):
     "{marquee text} | Listening Now: {current show} | Coming Up: {show1} at 02:00 PM PDT, {show2} at 05:00 PM PDT"
     """
 
-    def list(self, request):
+    def get(self, request):
         now = datetime.now()
 
         # Fetch shows
