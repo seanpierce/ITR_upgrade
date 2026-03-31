@@ -21,8 +21,8 @@ export default defineConfig(async ({ mode }) => {
     },
     server: {
       watch: {
-        usePolling: true,
-        interval: 100, // optional, default ~100ms
+        usePolling: mode === 'development' ? true : false,
+        interval: 100,
       },
     },
   }
