@@ -95,6 +95,15 @@
           color: $color-red;
         }
       }
+
+      .message-content,
+      .join-leave-content {
+        color: white;
+      }
+
+      .join-leave-content {
+        font-style: italic;
+      }
     }
   }
 

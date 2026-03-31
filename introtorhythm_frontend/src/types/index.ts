@@ -14,6 +14,8 @@ export interface ChatMessage {
   isItr: boolean;
   timestamp: number;
   friendlyTime: string;
+  isJoin?: boolean;
+  isLeave?: boolean;
 }
 
 export interface ChatUser {

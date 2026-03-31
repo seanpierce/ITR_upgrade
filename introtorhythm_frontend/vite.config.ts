@@ -19,5 +19,11 @@ export default defineConfig(async ({ mode }) => {
         '@': fileURLToPath(new URL('./src', import.meta.url)),
       },
     },
+    server: {
+      watch: {
+        usePolling: true,
+        interval: 100, // optional, default ~100ms
+      },
+    },
   }
 })

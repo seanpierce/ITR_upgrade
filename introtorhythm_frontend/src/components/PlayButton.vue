@@ -22,7 +22,7 @@ import pauseButton from '@/assets/images/pause-circle-orange.png';
 
 const liveStore = useLiveStore();
 const { playing, loading } = storeToRefs(liveStore);
-const liveUrl = 'https://introtorhythm.com/stream';
+const liveUrl = 'https://staging.introtorhythm.com/listen';
 
 const toggleLive = () => {
     liveStore.toggleLive();

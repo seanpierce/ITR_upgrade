@@ -35,7 +35,7 @@ const purgeOldMessages = () => {
 setInterval(purgeOldMessages, runPurgeTime);
 
 // helper to broadcast system messages
-const sendSystemMessage = (text: string) => {
+const sendSystemMessage = (text: string, isJoin?: boolean, isLeave?: boolean) => {
   const now = Date.now();
   const msg: ChatMessage = {
     id: `system_${now}`,
@@ -44,6 +44,8 @@ const sendSystemMessage = (text: string) => {
     timestamp: now,
     friendlyTime: getTimeOfMessage(now),
     isItr: true,
+    isJoin,
+    isLeave,
   };
   messages.push(msg);
   console.log(messages, msg);
@@ -86,7 +88,7 @@ io.on(sock.CONNECTION, (socket) => {
     socket.emit(sock.JOIN_SUCCESS, username);
 
     // System join message
-    sendSystemMessage(`${username} has joined the chat`);
+    sendSystemMessage(`${username} has joined the chat`, true, false);
   });
 
   // Chat messages
@@ -119,7 +121,7 @@ io.on(sock.CONNECTION, (socket) => {
 
     users.delete(user.username);
     io.emit(sock.USER_LIST, Array.from(users.keys()));
-    sendSystemMessage(`${user.username} has left the chat`);
+    sendSystemMessage(`${user.username} has left the chat`, false, true);
   });
 
   // Disconnect handling.

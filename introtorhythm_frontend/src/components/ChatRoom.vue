@@ -26,13 +26,13 @@
             Username: <span class="red">{{ username }}</span> |
             <span @click="chatStore.unsetUsername" class="pointer bold logout">LOGOUT</span>
           </div>
-          <div v-for="msg in messages" :key="msg.id" class="message">
-            <span class="time-stamp">{{ msg.friendlyTime }}</span>
-            <span class="username" :class="{ me: msg.username === username }">{{
-              msg.username
-            }}</span
-            >: {{ msg.text }}
-          </div>
+          
+          <ChatMessage
+            v-for="msg in messages"
+            :key="msg.id"
+            :msg="msg"
+            :username="username"
+          />
         </div>
 
         <div id="message-input">
@@ -55,6 +55,7 @@
 import { onMounted } from 'vue';
 import { useChatStore } from '@/stores/chat';
 import { storeToRefs } from 'pinia';
+import ChatMessage from './chatMessage.vue';
 
 const chatStore = useChatStore();
 const { username, messages } = storeToRefs(chatStore);
