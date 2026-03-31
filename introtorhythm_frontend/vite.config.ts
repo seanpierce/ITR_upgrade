@@ -25,5 +25,8 @@ export default defineConfig(async ({ mode }) => {
         interval: 100,
       },
     },
+    optimizeDeps: {
+      include: ['axios']
+    },
   }
 })
