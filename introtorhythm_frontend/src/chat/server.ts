@@ -135,7 +135,7 @@ io.on(sock.CONNECTION, (socket) => {
       users.delete(user.username);
       disconnectTimers.delete(user.username);
       io.emit(sock.USER_LIST, Array.from(users.keys()));
-      sendSystemMessage(`${user.username} has left the chat`);
+      sendSystemMessage(`${user.username} has left the chat`, false, true);
     }, DISCONNECT_GRACE);
 
     disconnectTimers.set(user.username, timer);
