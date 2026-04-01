@@ -166,3 +166,11 @@ TINYMCE_DEFAULT_CONFIG = {
 
 if not DEBUG:
     STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+
+# Scheduler and ezstream settings
+SCHEDULER_UPLOAD_DIR = os.path.join(BASE_DIR, os.getenv('SCHEDULER_UPLOAD_DIR', ''))
+EZSTREAM_HOST = os.getenv('EZSTREAM_HOST')
+EZSTREAM_PORT = os.getenv('EZSTREAM_PORT')
+EZSTREAM_PASSWORD = os.getenv('EZSTREAM_PASSWORD')
+EZSTREAM_MOUNTPOINT = os.getenv('EZSTREAM_MOUNTPOINT')
+EZSTREAM_FORMAT = os.getenv('EZSTREAM_FORMAT')
