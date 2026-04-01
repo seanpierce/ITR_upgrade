@@ -1,16 +1,17 @@
 import glob
 import os
-from django.conf import settings
-from xml.etree.ElementTree import XML
+import xml.etree.ElementTree as XML
 
+from django.conf import settings
 from .models import Show
 
+upload_dir = os.path.join(settings.BASE_DIR, settings.SCHEDULER_UPLOAD_DIR)
 
 def initiate_ezstream(show: Show):
     # This function would contain the logic to start ezstream with the given show details.
     # The implementation would depend on how you have set up ezstream and how you want to pass the show details to it.
 
-    if show.pre_recorded_show.field.blank or show.pre_recorded_show is None:
+    if show.pre_recorded_show is None:
         message = 'Show for this time slot %s - %s does not have pre-recorded audio' %(show.start_date_time, show.end_date_time)
         return message
     
@@ -39,8 +40,8 @@ def delete_existing_config():
     Deletes any existing pid or config files.
     """
 
-    config_list = glob.glob('%s/scheduler.xml' %os.path.dirname(os.path.abspath(__file__)))
-    pid_list = glob.glob('%s/pid.txt' %os.path.dirname(os.path.abspath(__file__)))
+    config_list = glob.glob(f'{upload_dir}/scheduler.xml')
+    pid_list = glob.glob(f'{upload_dir}/pid.txt')
 
     # there should only be one, but just in case
     for config in config_list:
@@ -49,7 +50,8 @@ def delete_existing_config():
     #  again, there should only be one...
     for pid_file in pid_list:
         # read pid from file
-        with open("%s/pid.txt" %os.path.dirname(os.path.abspath(__file__))) as file:
+        
+        with open(f"{upload_dir}/pid.txt") as file:
             pid = file.readline().strip()
             # kill process (if exists)
             # note: ezstream process will always be 1 more than the pid on file
@@ -63,8 +65,7 @@ def create_ezstream_config(filename):
     """
     Creates ezstream xml config file.
     """
-
-    upload_dir = settings.SCHEDULER_UPLOAD_DIR
+    
     host = settings.EZSTREAM_HOST
     port = settings.EZSTREAM_PORT
     password = settings.EZSTREAM_PASSWORD
@@ -72,38 +73,38 @@ def create_ezstream_config(filename):
     stream_format = settings.EZSTREAM_FORMAT
 
     # create the file structure
-    ezstream = XML.Element('ezstream')
-    servers = XML.SubElement(ezstream, 'servers')
-    server = XML.SubElement(servers, 'server')
-    hostname = XML.SubElement(server, 'hostname')
-    port = XML.SubElement(server, 'port')
-    password = XML.SubElement(server, 'password')
-    streams = XML.SubElement(ezstream, 'streams')
-    stream = XML.SubElement(streams, 'stream')
-    mountpoint = XML.SubElement(stream, 'mountpoint')
-    format_element = XML.SubElement(stream, 'format')
-    intakes = XML.SubElement(ezstream, 'intakes')
-    intake = XML.SubElement(intakes, 'intake')
-    filename_element = XML.SubElement(intake, 'filename')
-    shuffle = XML.SubElement(intake, 'shuffle')
-    stream_once = XML.SubElement(intake, 'stream_once')
+    ezstream_elem = XML.Element('ezstream')
+    servers_elem = XML.SubElement(ezstream_elem, 'servers')
+    server_elem = XML.SubElement(servers_elem, 'server')
+    hostname_elem = XML.SubElement(server_elem, 'hostname')
+    port_elem = XML.SubElement(server_elem, 'port')
+    password_elem = XML.SubElement(server_elem, 'password')
+    streams_elem = XML.SubElement(ezstream_elem, 'streams')
+    stream_elem = XML.SubElement(streams_elem, 'stream')
+    mountpoint_elem = XML.SubElement(stream_elem, 'mountpoint')
+    format_elem = XML.SubElement(stream_elem, 'format')
+    intakes_elem = XML.SubElement(ezstream_elem, 'intakes')
+    intake_elem = XML.SubElement(intakes_elem, 'intake')
+    filename_elem = XML.SubElement(intake_elem, 'filename')
+    shuffle_elem = XML.SubElement(intake_elem, 'shuffle')
+    stream_once_elem = XML.SubElement(intake_elem, 'stream_once')
 
     # populate element values
-    hostname.text = host
-    port.text = port
-    password.text = password
-    mountpoint.text = mountpoint
-    format_element.text = stream_format
-    filename_element.text = '%s/%s' %(upload_dir, filename.rsplit('/', 1)[1])
-    shuffle.text = '0'
-    stream_once.text = '1'
+    hostname_elem.text = host
+    port_elem.text = port
+    password_elem.text = password
+    mountpoint_elem.text = mountpoint
+    format_elem.text = stream_format
+    filename_elem.text = f"{upload_dir}{filename}"
+    shuffle_elem.text = '0'
+    stream_once_elem.text = '1'
 
     # write file
-    ezstream_config = XML.tostring(ezstream)
-    path = "%s/scheduler.xml" %os.path.dirname(os.path.abspath(__file__))
+    ezstream_config = XML.tostring(ezstream_elem, encoding='utf-8', method='xml')
+    path = f"{upload_dir}scheduler.xml"
     ezstream_config_file = open(path, "wb")
     ezstream_config_file.write(ezstream_config)
-
+    ezstream_config_file.close()
 
 def start_ezstream():
     """
@@ -112,9 +113,10 @@ def start_ezstream():
     replacing the current ezstream config.
     """
 
-    path_to_config = "%s/scheduler.xml" %os.path.dirname(os.path.abspath(__file__))
-    path_to_pid = "%s/pid.txt" %os.path.dirname(os.path.abspath(__file__))
-    command = 'echo $$ > %s; ezstream -c %s' %(path_to_pid, path_to_config)
+    upload_dir = os.path.join(settings.BASE_DIR, settings.SCHEDULER_UPLOAD_DIR)
+    path_to_config = f"{upload_dir}scheduler.xml"
+    path_to_pid = f"{upload_dir}pid.txt"
+    command = f'echo $$ > {path_to_pid}; ezstream -c {path_to_config}'
     os.system(command)
 
 # def run():

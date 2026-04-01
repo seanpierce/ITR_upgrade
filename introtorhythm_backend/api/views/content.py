@@ -1,11 +1,10 @@
 from datetime import datetime
 
 import pytz
-from rest_framework.views import APIView
-from rest_framework.response import Response
-
 from content.models import MarqueeText, About
 from content.serializers import MarqueeTextSerializer, AboutSerializer
+from rest_framework.views import APIView
+from rest_framework.response import Response
 from schedule.models import Show
 
 class GetContentAPIView(APIView):

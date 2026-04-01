@@ -1,15 +1,14 @@
-from django.db import models
-from django.utils import timezone
-
 from datetime import datetime, timedelta
-from django.conf import settings
-from django.core.files.storage import FileSystemStorage
 from django.db import models
+from django.conf import settings
+from django.utils import timezone
+from django.core.files.storage import FileSystemStorage
 from django.dispatch import receiver
 from schedule.helpers import TIMES, DURATION
 
 
-uploads = FileSystemStorage(location=settings.BASE_DIR) 
+base_dir = FileSystemStorage(location=settings.BASE_DIR)
+upload_dir = settings.SCHEDULER_UPLOAD_DIR
 
 class Show(models.Model):
     """
@@ -27,7 +26,7 @@ class Show(models.Model):
     active = models.BooleanField(default=True)
     show_image = models.ImageField(upload_to='shows/images/', max_length=500, blank=True, help_text='The show\'s image that will be displayed on the site while the show is live.')
     show_flyer = models.ImageField(upload_to='shows/images/', max_length=500, blank=True, help_text='The show\'s flyer that will be used on the schedule page and for social media.')
-    pre_recorded_show = models.FileField(upload_to='uploads/scheduler/', storage=uploads, max_length=500, blank=True, help_text='Optional upload field for pre-recorded shows. Files MUST be in MP3 format.')
+    pre_recorded_show = models.FileField(upload_to=upload_dir, storage=base_dir, max_length=500, blank=True, help_text='Optional upload field for pre-recorded shows. Files MUST be in MP3 format.')
 
     class Meta:
         ordering = ['date', 'start_time']

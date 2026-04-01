@@ -168,7 +168,7 @@ if not DEBUG:
     STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 # Scheduler and ezstream settings
-SCHEDULER_UPLOAD_DIR = os.path.join(BASE_DIR, os.getenv('SCHEDULER_UPLOAD_DIR', ''))
+SCHEDULER_UPLOAD_DIR = os.getenv('SCHEDULER_UPLOAD_DIR')
 EZSTREAM_HOST = os.getenv('EZSTREAM_HOST')
 EZSTREAM_PORT = os.getenv('EZSTREAM_PORT')
 EZSTREAM_PASSWORD = os.getenv('EZSTREAM_PASSWORD')

@@ -23,8 +23,8 @@ class InitiateSchedulerAPIView(APIView):
     """
     API endpoint to trigger the scheduler to check for a show to be played at a specific date and time. 
     Then, the process initiates a new instance of ezstreame if a show is active. 
-    This can be set up as a cron job to run every hour.
-    For example, you can add the following line to your crontab (using `crontab -e`):
+    This is set up as a cron job to run every hour.
+    The following line has been added to the crontab (using `crontab -e`):
     0 * * * * curl -X GET "http://127.0.0.1:8000/my-endpoint/" -H "Authorization: Bearer MY_SECRET_KEY_123"
     """
     def get(self, request):
@@ -35,8 +35,5 @@ class InitiateSchedulerAPIView(APIView):
         if show is None:
             return Response({"message": "No active show at this time."})
 
-        # Here you would add the logic to initiate ezstream with the show's details.
-        # This could involve making a system call, sending a message to a task queue, etc.
-        # For example:
         result = initiate_ezstream(show)
         return Response({"message": result})
